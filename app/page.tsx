@@ -65,7 +65,7 @@ export default async function Home() {
           href="/about"
           className="text-xs text-[var(--muted-2)] hover:text-[var(--muted)] transition"
         >
-          Construit avec Next.js + MapLibre · Données stockées en local
+          Made by Nads
         </Link>
       </section>
     </main>
