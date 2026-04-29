@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npx --yes create-next-app@latest . --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --use-npm --no-turbopack --eslint --yes)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name init)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma generate)",
+      "Bash(npm view *)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx tsx prisma/seed.ts)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx next build)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx next dev --port 3737)",
+      "Bash(echo \"Started PID $!\" sleep 6 echo \"--- log ---\" cat /tmp/nextdev.log)",
+      "Bash(curl -s -o /tmp/home.html -w \"HTTP %{http_code}\\\\n\" http://localhost:3737/)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -o /tmp/trip.html -w \"HTTP %{http_code}\\\\n\" http://localhost:3737/trips/budapest-mai-2025)",
+      "Bash(curl *)",
+      "Bash(python test_e2e.py)",
+      "Bash(python test_map.py)",
+      "Bash(python test_dim.py)",
+      "Bash(python test_visual.py)",
+      "Bash(python test_network.py)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name add_price_crowd)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name add_fun_fact)",
+      "Bash(python test_scroll.py)",
+      "Bash(npx tsx -e ' *)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "comet-bridge",
+    "gitlab-mastore",
+    "pdfx",
+    "obsidian-mcp",
+    "obsidian-rest"
+  ]
+}

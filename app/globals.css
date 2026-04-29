@@ -1,0 +1,215 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+:root {
+  --background: #07060d;
+  --foreground: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-strong: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --muted: rgba(248, 250, 252, 0.6);
+  --muted-2: rgba(248, 250, 252, 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Animated mesh gradient background */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  background:
+    radial-gradient(at 12% 18%, rgba(244, 114, 182, 0.35) 0px, transparent 45%),
+    radial-gradient(at 82% 12%, rgba(99, 102, 241, 0.32) 0px, transparent 45%),
+    radial-gradient(at 78% 88%, rgba(16, 185, 129, 0.28) 0px, transparent 45%),
+    radial-gradient(at 18% 82%, rgba(251, 146, 60, 0.32) 0px, transparent 45%),
+    linear-gradient(180deg, #07060d 0%, #0c0a17 60%, #07060d 100%);
+  animation: meshFloat 24s ease-in-out infinite alternate;
+}
+
+@keyframes meshFloat {
+  0%   { background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 0; }
+  100% { background-position: 6% 4%, 94% 6%, 96% 94%, 4% 96%, 0 0; }
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>");
+}
+
+/* Glass card — used OUTSIDE the map (header, day pills, hero...) */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+}
+
+.glass-strong {
+  background: var(--surface-strong);
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+}
+
+/* Panels OVER the WebGL map.
+   Strategy: a solid dark base FIRST so readability is guaranteed even when
+   backdrop-filter fails or is disabled, then a translucent layer on top + a
+   subtle inner highlight that mimics real glass. */
+.panel-on-map {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    rgba(8, 6, 14, 0.90);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 48px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.panel-on-map-strong {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    rgba(6, 5, 12, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 24px 60px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+/* The place-card cells inside the bottom timeline need stronger contrast
+   against the bright streets of the dark map. */
+.place-cell {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+}
+.place-cell:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.place-cell-active {
+  background: #ffffff;
+  color: #0a0814;
+}
+
+/* Marker pulse */
+.marker-pulse::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.35;
+  animation: pulse 1.8s ease-out infinite;
+}
+@keyframes pulse {
+  0%   { transform: scale(0.8); opacity: 0.45; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Custom scrollbar in dark */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+/* Hide attribution overlap on small map */
+.maplibregl-ctrl-attrib { font-size: 10px; opacity: 0.6; }
+
+/* Animated text shimmer */
+.shimmer-text {
+  background: linear-gradient(
+    100deg,
+    rgba(255,255,255,0.6) 30%,
+    rgba(255,255,255,1) 50%,
+    rgba(255,255,255,0.6) 70%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Floating animation */
+.float-slow { animation: floaty 6s ease-in-out infinite; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* Tag pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Marker tooltip arrow override */
+.maplibregl-popup-content {
+  background: rgba(7, 6, 13, 0.92) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px !important;
+  backdrop-filter: blur(18px);
+  padding: 12px 14px !important;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.5);
+}
+.maplibregl-popup-tip {
+  border-top-color: rgba(7, 6, 13, 0.92) !important;
+  border-bottom-color: rgba(7, 6, 13, 0.92) !important;
+}
+.maplibregl-popup-close-button { color: rgba(255,255,255,0.7) !important; font-size: 18px !important; padding-right: 6px !important; }
+
+/* Hide leaflet-style outlines */
+.maplibregl-canvas:focus { outline: none; }
